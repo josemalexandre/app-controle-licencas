@@ -48,6 +48,34 @@ def inserir_empresa(razao_social:str, cnpj:str, criado_em = data_atual):
         conn.close()
 
 
+def atualizar_empresa(empresa_id: int, razao_social: str, cnpj: str):
+    if not razao_social:
+        return None, 'Razão social obrigatória'
+    cnpj_norm = utils.normaliza_cnpj(cnpj)
+    if not cnpj_norm:
+        return None, 'CNPJ inválido'
+    
+    try:
+        conn = conecta()
+        cur = conn.cursor()
+        
+        cur.execute("""
+            UPDATE empresas
+            SET razao_social = ?, cnpj = ?
+            WHERE id = ?
+        """, (razao_social, cnpj_norm, empresa_id)
+        )
+        
+        conn.commit()
+        if cur.rowcount == 0:
+            return False, 'Empresa não encontrada'
+        return True, None
+    except:
+        return False
+    finally:
+        conn.close()
+
+
 def excluir_empresa(empresa_id: int):
     conn = conecta()
     cur = conn.cursor()
@@ -71,7 +99,6 @@ def listar_tipos():
     cur.execute("SELECT * FROM tipos_documento ORDER BY descricao")
     rows = cur.fetchall()
     conn.close()
-    print(rows)
     return rows
 
 
@@ -154,11 +181,10 @@ def listar_documentos():
             d.numero_documento,
             d.data_emissao,
             d.data_vencimento,
-            d.observacoes,
-            d.criado_em
+            d.observacoes
         FROM documentos d
         JOIN empresas e ON e.id = d.empresa_id
-        JOIN tipos_document t ON t.id = d.tipo_id
+        JOIN tipos_documento t ON t.id = d.tipo_id
         ORDER BY e.razao_social, d.data_vencimento;
     """)
     rows = cur.fetchall()
@@ -166,22 +192,20 @@ def listar_documentos():
     return rows
 
 
-def inserir_documentos(empresa_id: int, tipo_id: int, numero_documento:str, data_emissao: str = None, data_vencimento: str = None, observacoes: str = None, criado_em = data_atual):
+def inserir_documentos(empresa_id: int, tipo_id: int, numero_documento:str, data_emissao: str = None, data_vencimento: str = None, observacoes: str = None):
     if not numero_documento or not numero_documento.strip():
         return None, 'Número do documento obrigatório'
     
     conn = conecta()
     cur = conn.cursor()
-    
-    criado_em = datetime.now().date().strftime('%d/%m/%Y')
-    
+
     try:
         cur.execute("""
             INSERT INTO documentos
-                (empresa_id, tipo_id, numero_documento, data_emissao, data_vencimento, observacoes, criado_em)
+                (empresa_id, tipo_id, numero_documento, data_emissao, data_vencimento, observacoes)
             VALUES
-                (?, ?, ?, ?, ?, ?, ?)
-        """, (empresa_id, tipo_id, numero_documento, data_emissao, data_vencimento, observacoes, criado_em)
+                (?, ?, ?, ?, ?, ?)
+        """, (empresa_id, tipo_id, numero_documento, data_emissao, data_vencimento, observacoes)
         )
         conn.commit()
         return cur.lastrowid, None
