@@ -264,7 +264,7 @@ def excluir_documento(doc_id: int):
 # CONSULTAS
 # -----------------------------
 
-def contar_empreas():
+def contar_empresas():
     conn = conecta()
     cur = conn.cursor()
     
