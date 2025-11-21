@@ -260,4 +260,38 @@ def excluir_documento(doc_id: int):
     return ok
 
 
+# -----------------------------
+# CONSULTAS
+# -----------------------------
+
+def contar_empreas():
+    conn = conecta()
+    cur = conn.cursor()
     
+    cur.execute('SELECT COUNT(*) FROM empresas')
+    
+    qtde = cur.fetchall()[0]
+    conn.close()
+    return qtde
+
+
+def contar_tipos():
+    conn = conecta()
+    cur = conn.cursor()
+    
+    cur.execute('SELECT COUNT(*) FROM tipos_documento')
+    
+    qtde = cur.fetchall()[0]
+    conn.close()
+    return qtde
+
+
+def contar_documentos():
+    conn = conecta()
+    cur = conn.cursor()
+
+    cur.execute('SELECT COUNT(*) FROM documentos')
+    
+    qtde = cur.fetchall()[0]
+    conn.close()
+    return qtde
