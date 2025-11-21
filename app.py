@@ -9,19 +9,28 @@ st.set_page_config(page_title='Controle de Documentos', layout='wide', page_icon
 # ---------- Helpers ----------
 def contar_tabelas():
     """Retorna (empresas, tipos, documentos) como inteiros usando consultas.py"""
-    if db.contar_empreas
+    empresas = db.contar_empresas() if db.contar_empresas() > 0 else 0
+    tipos = db.contar_tipos() if db.contar_tipos() > 0 else 0
+    docs = db.contar_documentos() if db.contar_documentos() > 0 else 0
+    return empresas, tipos, docs
 
-    # try:
-    #     empresas = len(db.listar_empresas()) if callable(db.listar_empresas) else 0
-    # except Exception:
-    #     empresas = 0
-    # try:
-    #     tipos = len(db.listar_tipos()) if callable(db.listar_tipos) else 0
-    # except Exception:
-    #     tipos = 0
-    # try:
-    #     docs = len(db.listar_documentos()) if callable(db.listar_documentos) else 0
-    # except Exception:
-    #     docs = 0
-    # return empresas, tipos, docs
-        
+
+# ---------- Layout de abas ----------
+tabs = st.tabs(['Principal', 'Consulta','Cadastro'])
+tab_principal, tab_consulta, tab_cadastro = tabs
+
+
+# -------------------------
+# Aba: Principal
+# -------------------------
+with tab_principal:
+    st.title('📃 Controle de Documentos - Página Principal')
+
+    empresas_count, tipos_count, docs_count = contar_tabelas()
+
+    c1, c2, c3 = st.columns(3)
+    c1.metric('Empresas cadastradas', empresas_count)
+    c2.metric('Tipos cadastrados', tipos_count)
+    c3.metric('Documentos cadastrados', docs_count)
+
+

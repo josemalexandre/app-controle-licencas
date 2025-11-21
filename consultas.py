@@ -270,7 +270,7 @@ def contar_empresas():
     
     cur.execute('SELECT COUNT(*) FROM empresas')
     
-    qtde = cur.fetchall()[0]
+    qtde = cur.fetchone()[0]
     conn.close()
     return qtde
 
@@ -281,7 +281,7 @@ def contar_tipos():
     
     cur.execute('SELECT COUNT(*) FROM tipos_documento')
     
-    qtde = cur.fetchall()[0]
+    qtde = cur.fetchone()[0]
     conn.close()
     return qtde
 
@@ -292,6 +292,6 @@ def contar_documentos():
 
     cur.execute('SELECT COUNT(*) FROM documentos')
     
-    qtde = cur.fetchall()[0]
+    qtde = cur.fetchone()[0]
     conn.close()
     return qtde
